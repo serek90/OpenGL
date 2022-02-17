@@ -1,3 +1,12 @@
+/*
+* This is a very simple program to print your OpenGL version
+*
+* Fell free to use and modify it
+*
+* created 14.02.2022 by: jseroczy (serek90)
+*
+*/
+
 #include <stdlib.h>
 #define GLEW_STATIC
 #include <GL/glew.h>
