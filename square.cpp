@@ -1,5 +1,5 @@
 /*
-* This is a very simple program to draw a red triangle
+* This is a very simple program to draw a red square
 *
 * Fell free to use and modify it
 *
