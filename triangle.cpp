@@ -1,3 +1,12 @@
+/*
+* This is a very simple program to draw a red triangle
+*
+* Fell free to use and modify it
+*
+* created 16.01.2022 by: jseroczy (serek90)
+*
+*/
+
 #include <stdlib.h>
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -10,12 +19,16 @@ int height = 720;
 void drawTriangle()
 {
 	glBegin(GL_TRIANGLES);
+
 	glColor3f(1, 0, 0);
 	glVertex3f(-1, 0, 0);
+
 	glColor3f(1, 0, 0);
 	glVertex3f(0, 1, 0);
+
 	glColor3f(1, 0, 0);
 	glVertex3f(1, 0, 0);
+
 	glEnd();
 }
 
