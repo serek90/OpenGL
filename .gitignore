@@ -30,3 +30,26 @@
 *.exe
 *.out
 *.app
+
+#Others vs
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.suo
+*.db
+*.cmake
+*.bin
+*.tlog
+*.recipe
+*.pdb
+*.rule
+*.check_cache
+*.log
+*.stamp
+*.list
+*.depend
+*CMakeCache.txt
+*.ilk
+*.db-shm
+*.db-wal
