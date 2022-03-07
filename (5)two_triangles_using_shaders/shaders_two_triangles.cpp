@@ -1,3 +1,12 @@
+/*
+* My solution to exercise from page: 
+* https://learnopengl.com
+*
+* Exercise 1:
+* Try to draw 2 triangles next to each other using glDrawArrays by adding more vertices to your data
+*
+* @author: jseroczy (serek90)
+*/
 
 /* standard libs */
 #include <stdlib.h>
@@ -8,15 +17,25 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+/* window sizes */
 int width = 1080;
 int height = 720;
 
 float vertices[] = {
-	-0.5f, -0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.0f,  0.5f, 0.0f
+	-0.25f, -0.25f, 0.0f,
+	 0.25f, -0.25f, 0.0f,
+	 0.0f,  0.25f, 0.0f,
+
+	 0.75f, -0.25f, 0.0f,
+	 0.5,  0.25f, 0.0f
 };
 
+unsigned int indices[] = {  // note that we start from 0!
+	0, 1, 2,   // first triangle
+	1, 3, 4    // second triangle
+};
+
+/* shaders */
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
 "void main()\n"
@@ -34,12 +53,13 @@ const char* fragmentShaderSource = "#version 330 core\n"
 void prepareShader(void);
 unsigned int VAO;
 unsigned int VBO;
+unsigned int EBO;
 unsigned int shaderProgram;
 
 int main(int argc, char* argv[])
 {
 	std::cout << "Start drawing triangle" << std::endl;
-	//glewExperimental = GL_TRUE;
+	glewExperimental = GL_TRUE;
 	if (!glfwInit()) exit(EXIT_FAILURE);
 
 	GLFWwindow* window;
@@ -60,8 +80,6 @@ int main(int argc, char* argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	unsigned int VBO;
-
 	prepareShader();
 	
 	/* main loop */
@@ -73,7 +91,7 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT);
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);  //swap buffers
 		glfwPollEvents();         //listen for window events
@@ -89,19 +107,15 @@ int main(int argc, char* argv[])
 
 void prepareShader(void)
 {
+	/* check variables */
+	int  success;
+	char infoLog[512];
 
-	glGenBuffers(1, &VBO);
-
-	//GLuint sID = glCreateProgram();
-
+	/* vertex shader */
 	unsigned int vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
-	std::cout << "vertex Shader: " << vertexShader << std::endl;
-
-	int  success;
-	char infoLog[512];
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
@@ -109,11 +123,11 @@ void prepareShader(void)
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
+	/* fragment shader */
 	unsigned int fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
-	std::cout << "fragment Shader: " << fragmentShader << std::endl;
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
@@ -122,12 +136,14 @@ void prepareShader(void)
 	}
 
 
+	/* shader program */
 	shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
+	if (!success) 
+	{
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 	}
 
@@ -135,17 +151,19 @@ void prepareShader(void)
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
 
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
-	glGenVertexArrays(1, &VAO);
 	// 1. bind Vertex Array Object
 	glBindVertexArray(VAO);
-	// 2. copy our vertices array in a buffer for OpenGL to use
+	// 2. copy our vertices array in a vertex buffer for OpenGL to use
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	// 3. then set our vertex attributes pointers
+	// 3. copy our index array in a element buffer for OpenGL to use
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	// 4. then set the vertex attributes pointers
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
