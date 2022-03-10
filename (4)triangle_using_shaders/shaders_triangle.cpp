@@ -1,3 +1,11 @@
+/*
+* My solution to exercise from page:
+* https://learnopengl.com
+*
+* Draw red triangle using shaders
+*
+* @author: jseroczy (serek90)
+*/
 
 /* standard libs */
 #include <stdlib.h>
@@ -8,6 +16,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+/* window sizes */
 int width = 1080;
 int height = 720;
 
@@ -39,7 +48,7 @@ unsigned int shaderProgram;
 int main(int argc, char* argv[])
 {
 	std::cout << "Start drawing triangle" << std::endl;
-	//glewExperimental = GL_TRUE;
+	glewExperimental = GL_TRUE;
 	if (!glfwInit()) exit(EXIT_FAILURE);
 
 	GLFWwindow* window;
@@ -59,8 +68,6 @@ int main(int argc, char* argv[])
 		printf("ERROR: %s", glewGetErrorString(GlewInitResult));
 		exit(EXIT_FAILURE);
 	}
-
-	unsigned int VBO;
 
 	prepareShader();
 	
@@ -89,19 +96,15 @@ int main(int argc, char* argv[])
 
 void prepareShader(void)
 {
+	/* check variables */
+	int  success;
+	char infoLog[512];
 
-	glGenBuffers(1, &VBO);
-
-	//GLuint sID = glCreateProgram();
-
+	/* vertex shader */
 	unsigned int vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
-	std::cout << "vertex Shader: " << vertexShader << std::endl;
-
-	int  success;
-	char infoLog[512];
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
@@ -109,11 +112,11 @@ void prepareShader(void)
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
+	/* fragment shader compilation */
 	unsigned int fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
-	std::cout << "fragment Shader: " << fragmentShader << std::endl;
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
@@ -121,7 +124,7 @@ void prepareShader(void)
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
-
+	/* shader program creation */
 	shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
@@ -130,15 +133,16 @@ void prepareShader(void)
 	if (!success) {
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 	}
-
 	glUseProgram(shaderProgram);
+
+	/* delete unnecessary shaders */
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-
+	glGenBuffers(1, &VBO);
 	glGenVertexArrays(1, &VAO);
 	// 1. bind Vertex Array Object
 	glBindVertexArray(VAO);
