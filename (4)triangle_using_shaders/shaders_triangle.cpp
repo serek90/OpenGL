@@ -78,6 +78,7 @@ int main(int argc, char* argv[])
 		glViewport(0, 0, width, height);
 		glClearColor(.2, .2, .2, 1); //set background Color to dark grey
 		glClear(GL_COLOR_BUFFER_BIT);
+		
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -138,9 +139,6 @@ void prepareShader(void)
 	/* delete unnecessary shaders */
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
 
 	glGenBuffers(1, &VBO);
 	glGenVertexArrays(1, &VAO);

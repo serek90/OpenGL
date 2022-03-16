@@ -2,9 +2,7 @@
 * My solution to exercise from page:
 * https://learnopengl.com
 *
-* Draw triangle which change its color
-* First program using uniforms in shaders
-* 
+* Use out from vertex shader and pass it to fragment shader
 * @author: jseroczy (serek90)
 */
 
@@ -29,17 +27,19 @@ float vertices[] = {
 
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
+"out vec4 vertexColor;"  //set vertexColor as a output
 "void main()\n"
 "{\n"
 "   gl_Position = vec4(aPos, 1.0);\n"
+	"vertexColor = vec4(0.4, 0.3, 0.1, 1.0);\n"
 "}\0";
 
 const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4  FragColor;"
-"uniform vec4 shaderColor;"
+"in vec4 vertexColor;"
 "void main()\n"
 "{\n"
-"	FragColor = shaderColor;\n"
+"	FragColor = vertexColor;\n"
 "}\0";
 
 void prepareShader(void);
@@ -81,12 +81,6 @@ int main(int argc, char* argv[])
 		glClearColor(.2, .2, .2, 1); //set background Color to dark grey
 		glClear(GL_COLOR_BUFFER_BIT);
 		glUseProgram(shaderProgram);
-
-		float timeValue = glfwGetTime();
-		float blueValue = sin(timeValue) / 2.0f + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgram, "shaderColor");
-		glUniform4f(vertexColorLocation, 0.0f, 0.0f, blueValue, 1.0f);
-
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 

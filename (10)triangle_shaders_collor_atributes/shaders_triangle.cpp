@@ -2,9 +2,8 @@
 * My solution to exercise from page:
 * https://learnopengl.com
 *
-* Draw triangle which change its color
-* First program using uniforms in shaders
-* 
+* Draw triangle using shaders and make different color in every corner
+*
 * @author: jseroczy (serek90)
 */
 
@@ -22,24 +21,28 @@ int width = 1080;
 int height = 720;
 
 float vertices[] = {
-	-0.5f, -0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.0f,  0.5f, 0.0f
+	 /* positions  */       /* colors  */
+	-0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f, // bottom right 
+	 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, // bottom left
+	 0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f  // top
 };
 
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
+"layout (location = 1) in vec3 aColor;\n"
+"out vec3 ourColor;\n" //output a color to the fragment shader
 "void main()\n"
 "{\n"
 "   gl_Position = vec4(aPos, 1.0);\n"
+"	ourColor = aColor;\n"
 "}\0";
 
 const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4  FragColor;"
-"uniform vec4 shaderColor;"
+"in vec3 ourColor;"
 "void main()\n"
 "{\n"
-"	FragColor = shaderColor;\n"
+"	FragColor = vec4(ourColor, 1.0);\n"
 "}\0";
 
 void prepareShader(void);
@@ -80,13 +83,8 @@ int main(int argc, char* argv[])
 		glViewport(0, 0, width, height);
 		glClearColor(.2, .2, .2, 1); //set background Color to dark grey
 		glClear(GL_COLOR_BUFFER_BIT);
+		
 		glUseProgram(shaderProgram);
-
-		float timeValue = glfwGetTime();
-		float blueValue = sin(timeValue) / 2.0f + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgram, "shaderColor");
-		glUniform4f(vertexColorLocation, 0.0f, 0.0f, blueValue, 1.0f);
-
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -155,7 +153,11 @@ void prepareShader(void)
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	// 3. then set our vertex attributes pointers
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	/* position attribute */
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	/* color attribute */
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 }
