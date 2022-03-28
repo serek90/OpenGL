@@ -75,9 +75,11 @@ int main(int argc, char* argv[])
 		int vertexOffsetLocation = glGetUniformLocation(myShader.getID(), "Offset");
 		printf("%d\n", vertexOffsetLocation);
 		myShader.use();
+
 		if (!mark && offset <= 0.5f)offset += 0.002f;
 		else if (mark && offset >= -0.5f) offset -= 0.002f;
 		else mark = !mark;
+
 		glUniform4f(vertexOffsetLocation, offset, 0.0f, 0.0f, 1.0f);
 		
 	
