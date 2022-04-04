@@ -36,8 +36,8 @@ int main(int argc, char* argv[])
 	/* main loop */
 	while (!glfwWindowShouldClose(window))
 	{
-		glViewport(1100, 1100, width, height);
-		glClearColor(1, 1, 0, 0);
+		glViewport(1100, 500, width, height);
+		glClearColor(1, 0.2, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// here will be some drawing

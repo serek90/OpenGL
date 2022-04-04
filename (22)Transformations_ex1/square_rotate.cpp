@@ -2,9 +2,13 @@
 * My solution to exercise from page:
 * https://learnopengl.com
 *
-* using textuers in OpenGL example
+* exercise 1 from Transformations:
+* Using the last transformation on the container, 
+* try switching the order around by first rotating and then translating. 
+* See what happens and try to reason why this happens: solution.
 *
 * stb lib from: https://github.com/nothings/stb
+* GLM libs from: https://glm.g-truc.net/0.9.8/index.html
 *
 * @author: jseroczy (serek90)
 */
@@ -19,7 +23,11 @@
 #include "Shader.h"
 /* stb_lib.h */
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
+#include <stb/stb_image.h>
+/* GLM libs */
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 /* window sizes */
 int width = 1100;
@@ -80,6 +88,13 @@ int main(int argc, char* argv[])
 		glViewport(0, 0, width, height);
 		glClearColor(.2, .2, .2, 1); //set background Color to dark grey
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		glm::mat4 trans = glm::mat4(1.0f);
+
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, -1.0f));
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		unsigned int transformLoc = glGetUniformLocation(myShader.getID(), "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
 		myShader.use();
 

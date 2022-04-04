@@ -26,8 +26,8 @@
 #include "glm/gtc/type_ptr.hpp"
 
 /* window sizes */
-int width = 1080;
-int height = 720;
+int width = 1000;
+int height = 1000;
 
 float vertices[] = {
 	 /* positions  */       /* colors  */

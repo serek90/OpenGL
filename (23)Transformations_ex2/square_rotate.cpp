@@ -2,9 +2,16 @@
 * My solution to exercise from page:
 * https://learnopengl.com
 *
-* using textuers in OpenGL example
+* exercise 2 from Transformations:
+* Try drawing a second container with another call to glDrawElements 
+* but place it at a different position using transformations only. 
+* Make sure this second container is placed at the top-left of 
+* the window and instead of rotating, scale it over time 
+* (using the sin function is useful here; note that using sin will cause the object to 
+* invert as soon as a negative scale is applied)
 *
 * stb lib from: https://github.com/nothings/stb
+* GLM libs from: https://glm.g-truc.net/0.9.8/index.html
 *
 * @author: jseroczy (serek90)
 */
@@ -19,7 +26,11 @@
 #include "Shader.h"
 /* stb_lib.h */
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
+#include <stb/stb_image.h>
+/* GLM libs */
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 /* window sizes */
 int width = 1100;
@@ -80,13 +91,28 @@ int main(int argc, char* argv[])
 		glViewport(0, 0, width, height);
 		glClearColor(.2, .2, .2, 1); //set background Color to dark grey
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		myShader.use();
-
 		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glm::mat4 trans = glm::mat4(1.0f);
+		glm::mat4 trans_1 = glm::mat4(1.0f);
+
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		unsigned int transformLoc = glGetUniformLocation(myShader.getID(), "transform");
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+		trans_1 = glm::translate(trans_1, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans_1 = glm::rotate(trans_1, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, -1.0f));
+		trans_1 = glm::scale(trans_1, glm::vec3(0.3, 0.3 ,0));
+
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans_1));
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		myShader.use();
 		glfwSwapBuffers(window);  //swap buffers
 		glfwPollEvents();         //listen for window events
 	}
